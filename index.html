@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>កម្មវិធីក្តារសញ្ញាចល័ត - Signal Board Mobile App</title>
+    <title>ក្តារសញ្ញាផ្សាយផ្ទាល់ - Live Signal Board</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -38,7 +38,7 @@
                             '40%, 80%': { transform: 'translateX(10px)' }
                         },
                         zoomIn: {
-                            '0%': { opacity: '0', transform: 'scale(0.85)' },
+                            '0%': { opacity: '0', transform: 'scale(0.88)' },
                             '100%': { opacity: '1', transform: 'scale(1)' }
                         },
                         pulseGlow: {
@@ -70,27 +70,37 @@
         }
     </style>
 </head>
-<body class="h-full flex flex-col justify-between overflow-x-hidden font-sans select-none antialiased bg-slate-950 text-slate-100">
+<body class="h-full flex flex-col justify-between overflow-x-hidden font-sans select-none antialiased bg-slate-950 text-slate-100 min-h-screen">
 
-    <header class="w-full px-4 py-3 flex items-center justify-between glass-panel sticky top-0 z-20 border-b border-slate-800/80 shadow-lg">
+    <header class="w-full px-4 py-3 flex flex-wrap items-center justify-between glass-panel sticky top-0 z-20 border-b border-slate-800/80 shadow-lg gap-2">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-rose-500 flex items-center justify-center shadow-md shadow-indigo-500/20">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/>
                 </svg>
             </div>
             <div>
                 <h1 class="text-base sm:text-lg font-black tracking-wide text-white flex items-center gap-2">
-                    <span>ក្តារសញ្ញាឌីជីថល</span>
-                    <span class="text-[10px] uppercase font-mono tracking-wider px-1.5 py-0.5 rounded-full bg-indigo-950 text-indigo-400 border border-indigo-500/30">MOBILE PRO</span>
+                    <span>ក្តារសញ្ញាផ្សាយផ្ទាល់</span>
+                    <span class="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> LIVE
+                    </span>
                 </h1>
-                <p class="text-xs text-slate-400 font-medium">ចុចប៊ូតុងដើម្បីបង្ហាញសញ្ញា និងរាប់ស្ថិតិ</p>
+                <p class="text-xs text-slate-400 font-medium">ឆ្លើយតបផ្សាយផ្ទាល់ real-time similar to Mentimeter</p>
             </div>
         </div>
 
-        <div class="flex items-center gap-1.5 sm:gap-2">
-            <!-- Audio Sound Effects Toggle -->
-            <button id="soundToggleBtn" onclick="toggleSound()" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700/50 transition active:scale-95" title="បិទ/បើក សំឡេង Chime">
+        <div class="flex items-center gap-2">
+            <!-- Room Code Badge & Share Button -->
+            <button onclick="openShareModal()" class="px-3 py-1.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900/90 text-indigo-300 border border-indigo-500/30 font-mono text-xs font-bold flex items-center gap-1.5 active:scale-95 transition">
+                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                </svg>
+                <span>បន្ទប់: <span id="currentRoomDisplay" class="text-white underline">...</span></span>
+            </button>
+
+            <!-- Sound Toggle -->
+            <button id="soundToggleBtn" onclick="toggleSound()" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700/50 transition active:scale-95" title="បិទ/បើក សំឡេង">
                 <svg id="soundOnIcon" class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
                 </svg>
@@ -98,279 +108,263 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
                 </svg>
             </button>
-
-            <!-- Text-To-Speech Speech Voice Toggle -->
-            <button id="speechToggleBtn" onclick="toggleSpeech()" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700/50 transition active:scale-95" title="បិទ/បើក សំឡេងអានសញ្ញា">
-                <svg id="speechOnIcon" class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
-                </svg>
-                <svg id="speechOffIcon" class="w-5 h-5 text-slate-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
-                </svg>
-            </button>
-
-            <!-- Instructions Modal Toggle -->
-            <button onclick="toggleHelpModal(true)" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700/50 transition active:scale-95" title="ការណែនាំប្រើប្រាស់">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-            </button>
         </div>
     </header>
 
-    <main class="flex-1 max-w-md w-full mx-auto px-4 py-4 flex flex-col justify-center gap-4">
-
-        <!-- Signal Buttons Panel Grid -->
-        <div class="grid grid-cols-1 gap-4 w-full">
-            
-            <button id="btnOptionO" onclick="triggerSignal('O')" class="group relative w-full h-56 sm:h-64 rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-950 border-2 border-blue-400/50 p-6 flex flex-col items-center justify-between shadow-2xl shadow-blue-900/50 hover:shadow-blue-500/50 hover:border-blue-300 transition-all duration-200 active:scale-95 overflow-hidden">
-                <!-- Background Ambient Glow Effect -->
-                <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-blue-400/20 rounded-full blur-2xl group-hover:scale-150 transition-transform pointer-events-none"></div>
-                
-                <div class="w-full flex items-center justify-between z-10">
-                    <span class="px-2.5 py-1 rounded-full bg-blue-950/80 border border-blue-400/40 text-[11px] font-mono font-bold text-blue-300 uppercase tracking-wider">
-                        ជម្រើស O
-                    </span>
-                    <span class="text-xs font-mono font-bold text-blue-200/80 flex items-center gap-1">
-                        <svg class="w-3.5 h-3.5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                        </svg>
-                        មើលសញ្ញា
-                    </span>
-                </div>
-
-                <!-- Big Blue Circle Visual Symbol -->
-                <div class="my-auto relative flex items-center justify-center">
-                    <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-[12px] border-white drop-shadow-[0_0_20px_rgba(255,255,255,0.85)] group-hover:scale-110 transition-transform duration-200"></div>
-                </div>
-
-                <!-- Signal Label Texts -->
-                <div class="w-full text-center z-10">
-                    <span class="block text-2xl font-black text-white drop-shadow-md tracking-tight mb-0.5">
-                        ត្រឹមត្រូវ / យល់ព្រម
-                    </span>
-                    <span class="text-xs font-semibold text-blue-200/90 uppercase tracking-widest block">
-                        ចុចដើម្បីបង្ហាញសញ្ញា
-                    </span>
-                </div>
-
-                <!-- Dynamic Count Badge footer -->
-                <div class="w-full pt-2 border-t border-blue-400/25 flex justify-between items-center text-xs font-mono text-blue-100 z-10">
-                    <span>ចំនួនចុចសរុប:</span>
-                    <span id="badgeCountO" class="font-bold text-xs bg-blue-950/90 px-2.5 py-0.5 rounded-md text-blue-300 border border-blue-500/40">0</span>
-                </div>
+    <div class="max-w-xl w-full mx-auto px-4 pt-3 flex justify-center">
+        <div class="bg-slate-900/90 p-1 rounded-2xl border border-slate-800 flex w-full max-w-sm shadow-inner">
+            <button id="navPresenterTab" onclick="switchViewMode('presenter')" class="flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition bg-indigo-600 text-white shadow-md">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/>
+                </svg>
+                <span>ក្តារបង្ហាញ (Board)</span>
             </button>
-
-
-            <button id="btnOptionX" onclick="triggerSignal('X')" class="group relative w-full h-56 sm:h-64 rounded-3xl bg-gradient-to-br from-red-600 via-rose-700 to-red-950 border-2 border-red-400/50 p-6 flex flex-col items-center justify-between shadow-2xl shadow-red-950/60 hover:shadow-red-500/50 hover:border-red-300 transition-all duration-200 active:scale-95 overflow-hidden">
-                <!-- Background Ambient Glow Effect -->
-                <div class="absolute -left-10 -bottom-10 w-44 h-44 bg-red-400/20 rounded-full blur-2xl group-hover:scale-150 transition-transform pointer-events-none"></div>
-                
-                <div class="w-full flex items-center justify-between z-10">
-                    <span class="px-2.5 py-1 rounded-full bg-red-950/80 border border-red-400/40 text-[11px] font-mono font-bold text-red-300 uppercase tracking-wider">
-                        ជម្រើស X
-                    </span>
-                    <span class="text-xs font-mono font-bold text-red-200/80 flex items-center gap-1">
-                        <svg class="w-3.5 h-3.5 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                        </svg>
-                        មើលសញ្ញា
-                    </span>
-                </div>
-
-                <!-- Big Red Cross Visual Symbol -->
-                <div class="my-auto relative flex items-center justify-center">
-                    <svg class="w-24 h-24 sm:w-28 sm:h-28 text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.85)] group-hover:scale-110 group-hover:rotate-90 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </div>
-
-                <!-- Signal Label Texts -->
-                <div class="w-full text-center z-10">
-                    <span class="block text-2xl font-black text-white drop-shadow-md tracking-tight mb-0.5">
-                        មិនត្រឹមត្រូវ / បដិសេធ
-                    </span>
-                    <span class="text-xs font-semibold text-red-200/90 uppercase tracking-widest block">
-                        ចុចដើម្បីបង្ហាញសញ្ញា
-                    </span>
-                </div>
-
-                <!-- Dynamic Count Badge footer -->
-                <div class="w-full pt-2 border-t border-red-400/25 flex justify-between items-center text-xs font-mono text-red-100 z-10">
-                    <span>ចំនួនចុចសរុប:</span>
-                    <span id="badgeCountX" class="font-bold text-xs bg-red-950/90 px-2.5 py-0.5 rounded-md text-red-300 border border-red-500/40">0</span>
-                </div>
+            <button id="navAudienceTab" onclick="switchViewMode('audience')" class="flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition text-slate-400 hover:text-white">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+                <span>បន្ទះចុចឆ្លើយ (Pad)</span>
             </button>
+        </div>
+    </div>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <main class="flex-1 max-w-xl w-full mx-auto px-4 py-4 flex flex-col justify-center gap-4">
+
+        <!-- VIEW 1: PRESENTER / LIVE BOARD VIEW -->
+        <div id="presenterBoardView" class="space-y-4 w-full">
+
+            <!-- Live Summary Card -->
+            <div class="glass-panel rounded-3xl p-5 border border-slate-800 shadow-2xl relative overflow-hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="relative flex h-3 w-3">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        </span>
+                        <h2 class="text-sm font-bold tracking-wide text-slate-200 uppercase font-mono">លទ្ធផលផ្សាយផ្ទាល់ (Live Results)</h2>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <span id="totalRespondersBadge" class="text-xs font-mono font-bold text-indigo-300 bg-indigo-950/80 border border-indigo-700/50 px-3 py-1 rounded-full">
+                            អ្នកឆ្លើយសរុប: 0
+                        </span>
+                        <button onclick="promptResetRoom()" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-rose-400 border border-slate-700 transition" title="លុបលទ្ធផលទាំងអស់">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Big Visual Mentimeter-Style Live Bars Grid -->
+                <div class="grid grid-cols-2 gap-4 my-3">
+                    
+                    <!-- Option O Live Bar Column -->
+                    <div class="bg-gradient-to-b from-blue-950/60 to-slate-900 border border-blue-500/30 rounded-2xl p-4 flex flex-col items-center justify-between min-h-[220px] relative overflow-hidden">
+                        <div class="z-10 w-full text-center">
+                            <span class="text-xs font-mono font-bold text-blue-300 uppercase block mb-1">ជម្រើស O</span>
+                            <span class="text-base font-black text-white block">ត្រឹមត្រូវ / យល់ព្រម</span>
+                        </div>
+
+                        <!-- Vertical Bar Animation Container -->
+                        <div class="w-full h-32 bg-slate-950/80 rounded-xl relative overflow-hidden flex items-end p-1 border border-blue-900/40 my-2">
+                            <div id="barHeightO" class="w-full bg-gradient-to-t from-blue-700 to-blue-400 rounded-lg transition-all duration-500 ease-out flex items-center justify-center font-mono font-extrabold text-white text-sm shadow-lg shadow-blue-500/20" style="height: 0%">
+                                <span id="barHeightOText" class="drop-shadow">0%</span>
+                            </div>
+                        </div>
+
+                        <div class="z-10 flex items-center justify-between w-full pt-1">
+                            <span class="text-xs text-blue-300 font-mono">ចំនួន៖</span>
+                            <span id="liveCountO" class="text-2xl font-black font-mono text-blue-400">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Option X Live Bar Column -->
+                    <div class="bg-gradient-to-b from-red-950/60 to-slate-900 border border-red-500/30 rounded-2xl p-4 flex flex-col items-center justify-between min-h-[220px] relative overflow-hidden">
+                        <div class="z-10 w-full text-center">
+                            <span class="text-xs font-mono font-bold text-red-300 uppercase block mb-1">ជម្រើស X</span>
+                            <span class="text-base font-black text-white block">មិនត្រឹមត្រូវ / បដិសេធ</span>
+                        </div>
+
+                        <!-- Vertical Bar Animation Container -->
+                        <div class="w-full h-32 bg-slate-950/80 rounded-xl relative overflow-hidden flex items-end p-1 border border-red-900/40 my-2">
+                            <div id="barHeightX" class="w-full bg-gradient-to-t from-red-700 to-rose-400 rounded-lg transition-all duration-500 ease-out flex items-center justify-center font-mono font-extrabold text-white text-sm shadow-lg shadow-rose-500/20" style="height: 0%">
+                                <span id="barHeightXText" class="drop-shadow">0%</span>
+                            </div>
+                        </div>
+
+                        <div class="z-10 flex items-center justify-between w-full pt-1">
+                            <span class="text-xs text-red-300 font-mono">ចំនួន៖</span>
+                            <span id="liveCountX" class="text-2xl font-black font-mono text-red-400">0</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Combined Horizontal Percentage Distribution -->
+                <div class="mt-4">
+                    <div class="flex justify-between text-xs font-mono text-slate-400 mb-1.5">
+                        <span>សមាមាត្រ O (ត្រឹមត្រូវ) vs X (មិនត្រឹមត្រូវ)</span>
+                        <span id="ratioText">0% / 0%</span>
+                    </div>
+                    <div class="w-full bg-slate-950 rounded-full h-3 overflow-hidden flex border border-slate-800">
+                        <div id="ratioBarO" class="bg-blue-500 h-full transition-all duration-500" style="width: 50%"></div>
+                        <div id="ratioBarX" class="bg-red-500 h-full transition-all duration-500" style="width: 50%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Incoming Feed Container -->
+            <div class="glass-panel rounded-3xl p-4 border border-slate-800">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-mono font-bold text-slate-300 uppercase flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        កំណត់ត្រាចម្លើយថ្មីៗ (Live Feed)
+                    </span>
+                    <span class="text-[10px] font-mono text-slate-500">ប្រព័ន្ធ Real-time</span>
+                </div>
+                <div id="liveFeedList" class="max-h-40 overflow-y-auto hide-scrollbar space-y-1.5 text-xs font-mono">
+                    <div class="text-slate-500 italic text-center py-3">រង់ចាំការឆ្លើយតបពីអ្នកចូលរួម...</div>
+                </div>
+            </div>
+
+            <!-- Join Link Action Card -->
+            <div class="glass-panel rounded-2xl p-4 border border-indigo-900/40 bg-indigo-950/20 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600/30 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white">អញ្ជើញអ្នកចូលរួមឆ្លើយសំណួរ</h4>
+                        <p class="text-[11px] text-slate-400">ចែករំលែកតំណភ្ជាប់ដើម្បីឲ្យអ្នកផ្សេងទៀតបោះឆ្នោត</p>
+                    </div>
+                </div>
+                <button onclick="openShareModal()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl transition active:scale-95 flex-shrink-0">
+                    ចែករំលែក Link
+                </button>
+            </div>
 
         </div>
 
-        <div class="glass-panel rounded-2xl p-3 flex items-center justify-between gap-2 border border-slate-800 text-xs text-slate-300">
-            <span class="font-medium text-slate-300 flex items-center gap-1.5">
-                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                បិទសញ្ញាវិញស្វ័យប្រវត្តិ:
-            </span>
-            <div class="flex items-center gap-1.5">
-                <button onclick="setOverlayTimer(0)" id="timerOpt0" class="px-2.5 py-1 rounded-xl border text-[11px] font-mono transition bg-indigo-600 text-white border-indigo-500 font-bold">ចុចបិទ</button>
-                <button onclick="setOverlayTimer(2)" id="timerOpt2" class="px-2.5 py-1 rounded-xl border text-[11px] font-mono transition bg-slate-800 text-slate-400 border-slate-700">2s</button>
-                <button onclick="setOverlayTimer(4)" id="timerOpt4" class="px-2.5 py-1 rounded-xl border text-[11px] font-mono transition bg-slate-800 text-slate-400 border-slate-700">4s</button>
+        <!-- VIEW 2: AUDIENCE / RESPONDER PAD VIEW -->
+        <div id="audiencePadView" class="hidden space-y-4 w-full">
+            
+            <div class="text-center py-1">
+                <span class="text-xs font-mono font-semibold text-slate-400 block">ជ្រើសរើសចម្លើយរបស់អ្នក៖</span>
             </div>
+
+            <div class="grid grid-cols-1 gap-4 w-full">
+                
+                <!-- Option O Big Pad Button -->
+                <button id="btnAudienceO" onclick="submitVote('O')" class="group relative w-full h-52 sm:h-60 rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-950 border-2 border-blue-400/50 p-6 flex flex-col items-center justify-between shadow-2xl shadow-blue-900/50 hover:shadow-blue-500/50 hover:border-blue-300 transition-all duration-200 active:scale-95 overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-blue-400/20 rounded-full blur-2xl group-hover:scale-150 transition-transform pointer-events-none"></div>
+                    
+                    <div class="w-full flex items-center justify-between z-10">
+                        <span class="px-2.5 py-1 rounded-full bg-blue-950/80 border border-blue-400/40 text-[11px] font-mono font-bold text-blue-300 uppercase tracking-wider">
+                            ជម្រើស O
+                        </span>
+                        <span class="text-xs font-mono font-bold text-blue-200/80">ចុចដើម្បីបោះឆ្នោត</span>
+                    </div>
+
+                    <div class="my-auto relative flex items-center justify-center">
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-[10px] border-white drop-shadow-[0_0_20px_rgba(255,255,255,0.85)] group-hover:scale-110 transition-transform duration-200"></div>
+                    </div>
+
+                    <div class="w-full text-center z-10">
+                        <span class="block text-2xl font-black text-white drop-shadow-md">
+                            ត្រឹមត្រូវ / យល់ព្រម
+                        </span>
+                    </div>
+                </button>
+
+                <!-- Option X Big Pad Button -->
+                <button id="btnAudienceX" onclick="submitVote('X')" class="group relative w-full h-52 sm:h-60 rounded-3xl bg-gradient-to-br from-red-600 via-rose-700 to-red-950 border-2 border-red-400/50 p-6 flex flex-col items-center justify-between shadow-2xl shadow-red-950/60 hover:shadow-red-500/50 hover:border-red-300 transition-all duration-200 active:scale-95 overflow-hidden">
+                    <div class="absolute -left-10 -bottom-10 w-44 h-44 bg-red-400/20 rounded-full blur-2xl group-hover:scale-150 transition-transform pointer-events-none"></div>
+                    
+                    <div class="w-full flex items-center justify-between z-10">
+                        <span class="px-2.5 py-1 rounded-full bg-red-950/80 border border-red-400/40 text-[11px] font-mono font-bold text-red-300 uppercase tracking-wider">
+                            ជម្រើស X
+                        </span>
+                        <span class="text-xs font-mono font-bold text-red-200/80">ចុចដើម្បីបោះឆ្នោត</span>
+                    </div>
+
+                    <div class="my-auto relative flex items-center justify-center">
+                        <svg class="w-20 h-20 sm:w-24 sm:h-24 text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.85)] group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </div>
+
+                    <div class="w-full text-center z-10">
+                        <span class="block text-2xl font-black text-white drop-shadow-md">
+                            មិនត្រឹមត្រូវ / បដិសេធ
+                        </span>
+                    </div>
+                </button>
+
+            </div>
+
+            <!-- Feedback Badge -->
+            <div id="votedFeedbackBadge" class="hidden text-center p-3 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-bold text-xs animate-zoom-in">
+                ✓ បានផ្ញើចម្លើយរបស់អ្នករួចរាល់! លទ្ធផលត្រូវបានធ្វើបច្ចុប្បន្នភាពនៅលើក្តារ។
+            </div>
+
         </div>
 
     </main>
 
-    <footer class="w-full max-w-md mx-auto px-4 pb-5 pt-1">
-        <div class="glass-panel rounded-3xl p-4 sm:p-5 shadow-2xl border border-slate-800">
-            
-            <!-- Dashboard Header -->
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-2">
-                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
-                    <span class="text-xs font-mono font-bold tracking-wider text-slate-300 uppercase">ស្ថិតិនៃការប្រើប្រាស់</span>
-                </div>
-                <span id="totalTapsLabel" class="text-xs font-mono font-bold text-indigo-300 bg-indigo-950/80 border border-indigo-800/60 px-3 py-1 rounded-full">
-                    សរុបទាំងអស់: 0
-                </span>
-            </div>
-
-            <!-- Detailed Taps Stats Cards -->
-            <div class="grid grid-cols-2 gap-3 mb-3">
-                <!-- Option O Count Box -->
-                <div class="bg-blue-950/40 border border-blue-800/40 rounded-2xl p-3 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 rounded-full border-2 border-blue-400 flex-shrink-0"></div>
-                        <div>
-                            <span class="block text-[11px] font-bold text-blue-200">ត្រឹមត្រូវ (O)</span>
-                            <span id="percentO" class="text-[10px] font-mono text-blue-400/80">0%</span>
-                        </div>
-                    </div>
-                    <span id="statCountO" class="text-xl font-black font-mono text-blue-400">0</span>
-                </div>
-
-                <!-- Option X Count Box -->
-                <div class="bg-red-950/40 border border-red-800/40 rounded-2xl p-3 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                        <div>
-                            <span class="block text-[11px] font-bold text-red-200">បដិសេធ (X)</span>
-                            <span id="percentX" class="text-[10px] font-mono text-red-400/80">0%</span>
-                        </div>
-                    </div>
-                    <span id="statCountX" class="text-xl font-black font-mono text-red-400">0</span>
-                </div>
-            </div>
-
-            <!-- Visual Percentage Distribution Bar -->
-            <div class="w-full bg-slate-900 rounded-full h-3 mb-3 overflow-hidden flex border border-slate-800/80">
-                <div id="barO" class="bg-blue-500 h-full transition-all duration-300" style="width: 50%"></div>
-                <div id="barX" class="bg-red-500 h-full transition-all duration-300" style="width: 50%"></div>
-            </div>
-
-            <!-- Action Controls Row -->
-            <div class="flex items-center gap-2">
-                <!-- Reset Counters Button -->
-                <button onclick="promptResetCounters()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-rose-300 hover:text-rose-200 font-semibold py-2 px-3 rounded-xl border border-slate-700/80 transition flex items-center justify-center gap-1.5 text-xs active:scale-95">
-                    <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
-                    <span>កំណត់ស្ថិតិឡើងវិញ</span>
-                </button>
-
-                <!-- History Log Toggle Button -->
-                <button onclick="toggleHistoryLog()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 px-3 rounded-xl border border-slate-700/80 transition flex items-center justify-center text-xs gap-1.5 active:scale-95" title="មើលកំណត់ត្រាចុច">
-                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg>
-                    <span>កំណត់ត្រា</span>
-                </button>
-            </div>
-
-            <!-- Collapsible History Log List Container -->
-            <div id="historyContainer" class="hidden mt-3 pt-3 border-t border-slate-800">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-[11px] font-mono text-slate-400 uppercase font-semibold">ប្រវត្តិនៃការចុចសញ្ញា</span>
-                    <button onclick="clearHistory()" class="text-[11px] font-mono text-slate-500 hover:text-slate-300 underline">លុបប្រវត្តិ</button>
-                </div>
-                <div id="historyList" class="max-h-36 overflow-y-auto hide-scrollbar space-y-1.5 text-xs font-mono">
-                    <div class="text-slate-500 italic text-center py-2">មិនទាន់មានកំណត់ត្រានៅឡើយទេ។</div>
-                </div>
-            </div>
-
-        </div>
-    </footer>
-
-
-    <div id="fullOverlay" class="fixed inset-0 z-50 hidden flex-col items-center justify-center transition-opacity duration-200 cursor-pointer select-none" onclick="dismissOverlay()">
-        <div id="overlayBg" class="absolute inset-0 transition-colors duration-300"></div>
-        
-        <div class="relative z-10 flex flex-col items-center text-center p-6 max-w-lg w-full animate-zoom-in">
-            <!-- Overlay Symbol Holder -->
-            <div id="overlaySymbol" class="mb-5 flex items-center justify-center"></div>
-            
-            <!-- Overlay Main Text Title -->
-            <h2 id="overlayTitle" class="text-4xl sm:text-5xl font-black uppercase text-white drop-shadow-md mb-2"></h2>
-            
-            <!-- Overlay Subtitle Text -->
-            <p id="overlaySubtitle" class="text-base sm:text-xl font-bold text-white/90 font-mono drop-shadow"></p>
-
-            <!-- Tap Anywhere to Close Floating Badge -->
-            <div class="mt-10 px-5 py-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/25 text-white text-xs font-medium flex items-center gap-2 animate-bounce">
-                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/>
-                </svg>
-                <span>ចុចត្រង់ណាក៏បានដើម្បីបិទសញ្ញាវិញ</span>
-            </div>
-        </div>
-    </div>
-
-
-    <div id="helpModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <!-- SHARE ROOM / LINK MODAL -->
+    <div id="shareModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
         <div class="glass-panel max-w-sm w-full rounded-3xl p-6 border border-slate-700 shadow-2xl animate-zoom-in">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-base font-bold text-white flex items-center gap-2">
-                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
                     </svg>
-                    របៀបប្រើប្រាស់
+                    ចែករំលែកតំណបោះឆ្នោត
                 </h3>
-                <button onclick="toggleHelpModal(false)" class="text-slate-400 hover:text-white p-1">
+                <button onclick="closeShareModal()" class="text-slate-400 hover:text-white p-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
             
-            <ul class="space-y-2.5 text-xs text-slate-300 mb-6 leading-relaxed">
-                <li class="flex items-start gap-2">
-                    <span class="font-bold text-blue-400">•</span>
-                    <span><strong>ជម្រើស O (រង្វង់ពណ៌ខៀវ):</strong> ចុចដើម្បីបង្ហាញសញ្ញា "ត្រឹមត្រូវ / យល់ព្រម" ពេញអេក្រង់។</span>
-                </li>
-                <li class="flex items-start gap-2">
-                    <span class="font-bold text-red-400">•</span>
-                    <span><strong>ជម្រើស X (កាកបាទក្រហម):</strong> ចុចដើម្បីបង្ហាញសញ្ញា "មិនត្រឹមត្រូវ / បដិសេធ" ពេញអេក្រង់។</span>
-                </li>
-                <li class="flex items-start gap-2">
-                    <span class="font-bold text-indigo-400">•</span>
-                    <span><strong>ស្ថិតិរាប់សរុប:</strong> ប្រព័ន្ធនឹងកត់ត្រាចំនួននៃការចុចសញ្ញានីមួយៗ រួមទាំងគណនាភាគរយ (%) ដោយស្វ័យប្រវត្តិ។</span>
-                </li>
-                <li class="flex items-start gap-2">
-                    <span class="font-bold text-amber-400">•</span>
-                    <span><strong>បិទសញ្ញាស្វ័យប្រវត្តិ:</strong> អ្នកអាចជ្រើសរើសឲ្យសញ្ញាបិទវិញភ្លាមៗ ឬបន្ទាប់ពី ២វិនាទី ឬ ៤វិនាទី។</span>
-                </li>
-            </ul>
+            <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+                ផ្ញើតំណភ្ជាប់នេះទៅកាន់អ្នកចូលរួមទាំងអស់ ដើម្បីឲ្យពួកគាត់អាចបោះឆ្នោតពីទូរស័ព្ទរបស់ពួកគាត់បាន៖
+            </p>
 
-            <button onclick="toggleHelpModal(false)" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl transition text-xs">
-                យល់ព្រម!
+            <div class="mb-4">
+                <label class="text-[11px] font-mono text-slate-400 block mb-1">កូដបន្ទប់ (Room Code):</label>
+                <div class="flex gap-2">
+                    <input id="roomCodeInput" type="text" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono font-bold text-indigo-300 uppercase focus:outline-none focus:border-indigo-500">
+                    <button onclick="changeRoomCode()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-xs font-bold transition">
+                        ចូលបន្ទប់
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <label class="text-[11px] font-mono text-slate-400 block mb-1">Link សម្រាប់ចែករំលែក:</label>
+                <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 font-mono text-[11px] text-slate-300 break-all" id="shareUrlDisplay">
+                    ...
+                </div>
+            </div>
+
+            <button id="copyBtn" onclick="copyShareLink()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                </svg>
+                <span id="copyBtnText">ចម្លង Link</span>
             </button>
         </div>
     </div>
 
-
+    <!-- RESET CONFIRMATION MODAL -->
     <div id="resetModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
         <div class="glass-panel max-w-xs w-full rounded-3xl p-5 border border-slate-700 shadow-2xl text-center animate-zoom-in">
             <div class="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-3 border border-rose-500/30">
@@ -378,50 +372,268 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                 </svg>
             </div>
-            <h3 class="text-sm font-bold text-white mb-1">កំណត់ចំនួនរាប់ឡើងវិញ?</h3>
-            <p class="text-xs text-slate-300 mb-4 leading-relaxed">ការធ្វើបែបនេះនឹងលុបប្រវត្តិ និងស្ថិតិនៃការចុចទាំងអស់មក ០ វិញ។</p>
+            <h3 class="text-sm font-bold text-white mb-1">កំណត់បន្ទប់នេះឡើងវិញ?</h3>
+            <p class="text-xs text-slate-300 mb-4 leading-relaxed">ការធ្វើបែបនេះនឹងលុបលទ្ធផល និងចំនួនអ្នកឆ្លើយទាំងអស់ក្នុងបន្ទប់នេះមក ០ វិញ។</p>
             <div class="flex gap-2">
                 <button onclick="closeResetModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 rounded-xl text-xs">បោះបង់</button>
-                <button onclick="confirmResetCounters()" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-2 rounded-xl text-xs">លុបទាំងអស់</button>
+                <button onclick="confirmResetRoom()" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-2 rounded-xl text-xs">លុបទាំងអស់</button>
             </div>
         </div>
     </div>
 
+    <!-- FULL OVERLAY SIGNAL FEEDBACK -->
+    <div id="fullOverlay" class="fixed inset-0 z-50 hidden flex-col items-center justify-center transition-opacity duration-200 cursor-pointer select-none" onclick="dismissOverlay()">
+        <div id="overlayBg" class="absolute inset-0 transition-colors duration-300"></div>
+        <div class="relative z-10 flex flex-col items-center text-center p-6 max-w-lg w-full animate-zoom-in">
+            <div id="overlaySymbol" class="mb-5 flex items-center justify-center"></div>
+            <h2 id="overlayTitle" class="text-4xl sm:text-5xl font-black uppercase text-white drop-shadow-md mb-2"></h2>
+            <p id="overlaySubtitle" class="text-base sm:text-xl font-bold text-white/90 font-mono drop-shadow"></p>
+            <div class="mt-8 px-5 py-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/25 text-white text-xs font-medium flex items-center gap-2 animate-bounce">
+                <span>ចុចត្រង់ណាក៏បានដើម្បីបិទ</span>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        // Application State
-        let countO = 0;
-        let countX = 0;
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'signal-board-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : { apiKey: "demo", authDomain: "demo.firebaseapp.com", projectId: "demo" };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentRoomId = getRoomIdFromURL();
+        let currentUserId = null;
         let isMuted = false;
-        let isSpeechEnabled = true;
-        let overlayAutoCloseSeconds = 0;
-        let autoCloseTimerId = null;
-        let recentHistory = [];
         let audioCtx = null;
+        let roomUnsubscribe = null;
 
-        // Initialize Application State on Page Load
-        window.onload = function() {
-            loadState();
-            updateUI();
+        async function initApp() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                currentUserId = auth.currentUser?.uid || ('user_' + Math.random().toString(36).substring(2, 9));
+            } catch (err) {
+                console.warn('Auth fallback:', err);
+                currentUserId = 'user_' + Math.random().toString(36).substring(2, 9);
+            }
 
-            // Keyboard Shortcuts: 'O' or '1' for Option O; 'X' or '2' for Option X
-            window.addEventListener('keydown', function(e) {
-                if (document.getElementById('fullOverlay').classList.contains('flex')) {
-                    if (e.key === 'Escape' || e.key === ' ' || e.key === 'Enter') dismissOverlay();
-                    return;
+            document.getElementById('currentRoomDisplay').innerText = currentRoomId;
+            document.getElementById('roomCodeInput').value = currentRoomId;
+            updateShareUrlDisplay();
+
+            // Listen to current room
+            subscribeToRoom(currentRoomId);
+        }
+
+        function getRoomIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const roomParam = urlParams.get('room');
+            if (roomParam && roomParam.trim() !== '') {
+                return roomParam.trim().toUpperCase();
+            }
+            return 'MAIN';
+        }
+
+        function subscribeToRoom(roomId) {
+            if (roomUnsubscribe) roomUnsubscribe();
+
+            // Strict Path: /artifacts/{appId}/public/data/rooms/{roomId}
+            const roomDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', roomId);
+
+            roomUnsubscribe = onSnapshot(roomDocRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.data();
+                    renderRoomData(data);
+                } else {
+                    // Initialize empty room
+                    setDoc(roomDocRef, {
+                        countO: 0,
+                        countX: 0,
+                        history: [],
+                        updatedAt: Date.now()
+                    }, { merge: true });
                 }
-                if (e.key === 'o' || e.key === 'O' || e.key === '1') {
-                    triggerSignal('O');
-                } else if (e.key === 'x' || e.key === 'X' || e.key === '2') {
-                    triggerSignal('X');
-                }
+            }, (error) => {
+                console.error("Firestore room sync error:", error);
             });
+        }
+
+        function renderRoomData(data) {
+            const countO = data.countO || 0;
+            const countX = data.countX || 0;
+            const total = countO + countX;
+
+            document.getElementById('liveCountO').innerText = countO;
+            document.getElementById('liveCountX').innerText = countX;
+            document.getElementById('totalRespondersBadge').innerText = `អ្នកឆ្លើយសរុប: ${total}`;
+
+            const percentO = total > 0 ? Math.round((countO / total) * 100) : 0;
+            const percentX = total > 0 ? (100 - percentO) : 0;
+
+            // Height Bars
+            document.getElementById('barHeightO').style.height = `${percentO}%`;
+            document.getElementById('barHeightX').style.height = `${percentX}%`;
+            document.getElementById('barHeightOText').innerText = `${percentO}%`;
+            document.getElementById('barHeightXText').innerText = `${percentX}%`;
+
+            // Ratio horizontal bar
+            document.getElementById('ratioBarO').style.width = `${total > 0 ? percentO : 50}%`;
+            document.getElementById('ratioBarX').style.width = `${total > 0 ? percentX : 50}%`;
+            document.getElementById('ratioText').innerText = `${percentO}% / ${percentX}%`;
+
+            // Render Feed Log
+            const historyList = data.history || [];
+            const feedContainer = document.getElementById('liveFeedList');
+            if (historyList.length === 0) {
+                feedContainer.innerHTML = `<div class="text-slate-500 italic text-center py-3">រង់ចាំការឆ្លើយតបពីអ្នកចូលរួម...</div>`;
+            } else {
+                feedContainer.innerHTML = historyList.slice(0, 20).map(item => `
+                    <div class="flex items-center justify-between py-1.5 px-3 rounded-xl ${item.choice === 'O' ? 'bg-blue-950/40 text-blue-300 border border-blue-900/40' : 'bg-red-950/40 text-red-300 border border-red-900/40'}">
+                        <span class="font-bold flex items-center gap-1.5">
+                            ${item.choice === 'O' ? '🔵 សញ្ញា O (ត្រឹមត្រូវ/យល់ព្រម)' : '❌ សញ្ញា X (មិនត្រឹមត្រូវ/បដិសេធ)'}
+                        </span>
+                        <span class="text-[10px] text-slate-400 font-mono">${item.time || ''}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        window.submitVote = async function(choice) {
+            initAudioContext();
+            playChime(choice);
+            showOverlay(choice);
+
+            const badge = document.getElementById('votedFeedbackBadge');
+            badge.classList.remove('hidden');
+            setTimeout(() => badge.classList.add('hidden'), 4000);
+
+            const roomDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId);
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            try {
+                await updateDoc(roomDocRef, {
+                    [choice === 'O' ? 'countO' : 'countX']: (choice === 'O' ? (parseInt(document.getElementById('liveCountO').innerText) || 0) + 1 : (parseInt(document.getElementById('liveCountX').innerText) || 0) + 1),
+                    history: arrayUnion({
+                        choice: choice,
+                        userId: currentUserId,
+                        time: timeStr
+                    }),
+                    updatedAt: Date.now()
+                });
+            } catch (err) {
+                // If doc does not exist yet
+                setDoc(roomDocRef, {
+                    countO: choice === 'O' ? 1 : 0,
+                    countX: choice === 'X' ? 1 : 0,
+                    history: [{ choice, userId: currentUserId, time: timeStr }],
+                    updatedAt: Date.now()
+                }, { merge: true });
+            }
+        };
+
+        window.confirmResetRoom = async function() {
+            const roomDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId);
+            await setDoc(roomDocRef, {
+                countO: 0,
+                countX: 0,
+                history: [],
+                updatedAt: Date.now()
+            });
+            closeResetModal();
+        };
+
+        window.changeRoomCode = function() {
+            const newCode = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+            if (newCode && newCode !== currentRoomId) {
+                currentRoomId = newCode;
+                document.getElementById('currentRoomDisplay').innerText = currentRoomId;
+                updateShareUrlDisplay();
+                
+                // Update URL parameter without reload
+                const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?room=' + currentRoomId;
+                window.history.pushState({path: newUrl}, '', newUrl);
+
+                subscribeToRoom(currentRoomId);
+                closeShareModal();
+            }
+        };
+
+        function updateShareUrlDisplay() {
+            const url = window.location.protocol + "//" + window.location.host + window.location.pathname + '?room=' + currentRoomId;
+            document.getElementById('shareUrlDisplay').innerText = url;
+        }
+
+        // Global UI helper functions
+        window.switchViewMode = function(mode) {
+            const presTab = document.getElementById('navPresenterTab');
+            const audTab = document.getElementById('navAudienceTab');
+            const presView = document.getElementById('presenterBoardView');
+            const audView = document.getElementById('audiencePadView');
+
+            if (mode === 'presenter') {
+                presTab.className = "flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition bg-indigo-600 text-white shadow-md";
+                audTab.className = "flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition text-slate-400 hover:text-white";
+                presView.classList.remove('hidden');
+                audView.classList.add('hidden');
+            } else {
+                audTab.className = "flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition bg-indigo-600 text-white shadow-md";
+                presTab.className = "flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition text-slate-400 hover:text-white";
+                audView.classList.remove('hidden');
+                presView.classList.add('hidden');
+            }
+        };
+
+        window.openShareModal = function() {
+            updateShareUrlDisplay();
+            document.getElementById('shareModal').classList.remove('hidden');
+        };
+
+        window.closeShareModal = function() {
+            document.getElementById('shareModal').classList.add('hidden');
+        };
+
+        window.copyShareLink = function() {
+            const textToCopy = document.getElementById('shareUrlDisplay').innerText;
+            const input = document.createElement("textarea");
+            input.value = textToCopy;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+
+            const btnText = document.getElementById('copyBtnText');
+            btnText.innerText = "✓ បានចម្លងរួចរាល់!";
+            setTimeout(() => { btnText.innerText = "ចម្លង Link"; }, 2000);
+        };
+
+        window.promptResetRoom = function() {
+            document.getElementById('resetModal').classList.remove('hidden');
+        };
+
+        window.closeResetModal = function() {
+            document.getElementById('resetModal').classList.add('hidden');
+        };
+
+        window.toggleSound = function() {
+            isMuted = !isMuted;
+            document.getElementById('soundOnIcon').classList.toggle('hidden', isMuted);
+            document.getElementById('soundOffIcon').classList.toggle('hidden', !isMuted);
         };
 
         function initAudioContext() {
             if (!audioCtx) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (AudioContext) audioCtx = new AudioContext();
+                const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioCtxClass) audioCtx = new AudioCtxClass();
             }
             if (audioCtx && audioCtx.state === 'suspended') {
                 audioCtx.resume();
@@ -431,9 +643,7 @@
         function playChime(type) {
             if (isMuted) return;
             try {
-                initAudioContext();
                 if (!audioCtx) return;
-
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.connect(gain);
@@ -445,52 +655,19 @@
                     osc.frequency.setValueAtTime(523.25, now);
                     osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
                     gain.gain.setValueAtTime(0.35, now);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
                     osc.start(now);
-                    osc.stop(now + 0.45);
-                } else if (type === 'X') {
+                    osc.stop(now + 0.4);
+                } else {
                     osc.type = 'sawtooth';
                     osc.frequency.setValueAtTime(260, now);
                     osc.frequency.setValueAtTime(160, now + 0.12);
                     gain.gain.setValueAtTime(0.3, now);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
                     osc.start(now);
-                    osc.stop(now + 0.4);
+                    osc.stop(now + 0.35);
                 }
-            } catch (e) {
-                console.log('Audio chime error:', e);
-            }
-        }
-
-        function speakText(phrase) {
-            if (!isSpeechEnabled || !('speechSynthesis' in window)) return;
-            try {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(phrase);
-                utterance.rate = 1.1;
-                window.speechSynthesis.speak(utterance);
             } catch (e) {}
-        }
-
-        function triggerSignal(type) {
-            initAudioContext();
-            if (type === 'O') {
-                countO++;
-            } else {
-                countX++;
-            }
-
-            addHistoryEntry({
-                choice: type,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-            });
-
-            saveState();
-            updateUI();
-            playChime(type);
-            speakText(type === 'O' ? "ត្រឹមត្រូវ" : "មិនត្រឹមត្រូវ");
-
-            showOverlay(type);
         }
 
         function showOverlay(type) {
@@ -504,177 +681,27 @@
                 bg.className = 'absolute inset-0 bg-blue-600 transition-colors duration-200';
                 title.innerText = "ត្រឹមត្រូវ / យល់ព្រម";
                 subtitle.innerText = "OPTION O - APPROVED";
-                symbol.innerHTML = `<div class="w-40 h-40 sm:w-56 sm:h-56 rounded-full border-[18px] sm:border-[24px] border-white drop-shadow-[0_0_35px_rgba(255,255,255,0.9)] animate-bounce-short"></div>`;
+                symbol.innerHTML = `<div class="w-36 h-36 sm:w-48 sm:h-48 rounded-full border-[16px] sm:border-[20px] border-white drop-shadow-[0_0_35px_rgba(255,255,255,0.9)] animate-bounce-short"></div>`;
             } else {
                 bg.className = 'absolute inset-0 bg-red-600 transition-colors duration-200';
                 title.innerText = "មិនត្រឹមត្រូវ / បដិសេធ";
                 subtitle.innerText = "OPTION X - DENIED";
-                symbol.innerHTML = `<svg class="w-40 h-40 sm:w-56 sm:h-56 text-white drop-shadow-[0_0_35px_rgba(255,255,255,0.9)] animate-shake" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>`;
+                symbol.innerHTML = `<svg class="w-36 h-36 sm:w-48 sm:h-48 text-white drop-shadow-[0_0_35px_rgba(255,255,255,0.9)] animate-shake" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>`;
             }
 
             overlay.classList.remove('hidden');
             overlay.classList.add('flex');
-
-            if (autoCloseTimerId) clearTimeout(autoCloseTimerId);
-            if (overlayAutoCloseSeconds > 0) {
-                autoCloseTimerId = setTimeout(dismissOverlay, overlayAutoCloseSeconds * 1000);
-            }
+            setTimeout(dismissOverlay, 1800);
         }
 
-        function dismissOverlay() {
-            if (autoCloseTimerId) clearTimeout(autoCloseTimerId);
+        window.dismissOverlay = function() {
             const overlay = document.getElementById('fullOverlay');
             overlay.classList.add('hidden');
             overlay.classList.remove('flex');
-        }
+        };
 
-        function setOverlayTimer(sec) {
-            overlayAutoCloseSeconds = sec;
-            [0, 2, 4].forEach(s => {
-                const btn = document.getElementById(`timerOpt${s}`);
-                if (btn) {
-                    btn.className = (s === sec) 
-                        ? "px-2.5 py-1 rounded-xl border text-[11px] font-mono transition bg-indigo-600 text-white border-indigo-500 font-bold"
-                        : "px-2.5 py-1 rounded-xl border text-[11px] font-mono transition bg-slate-800 text-slate-400 border-slate-700";
-                }
-            });
-            saveState();
-        }
-
-        function addHistoryEntry(entry) {
-            recentHistory.unshift(entry);
-            if (recentHistory.length > 25) recentHistory.pop();
-        }
-
-        function renderHistoryList() {
-            const container = document.getElementById('historyList');
-            if (!container) return;
-
-            if (recentHistory.length === 0) {
-                container.innerHTML = `<div class="text-slate-500 italic text-center py-2">មិនទាន់មានកំណត់ត្រានៅឡើយទេ។</div>`;
-                return;
-            }
-
-            container.innerHTML = recentHistory.map(item => `
-                <div class="flex items-center justify-between py-1.5 px-3 rounded-xl ${item.choice === 'O' ? 'bg-blue-950/40 text-blue-300 border border-blue-900/40' : 'bg-red-950/40 text-red-300 border border-red-900/40'}">
-                    <span class="font-bold flex items-center gap-1.5">
-                        ${item.choice === 'O' ? '🔵 សញ្ញា O: ត្រឹមត្រូវ / យល់ព្រម' : '❌ សញ្ញា X: មិនត្រឹមត្រូវ / បដិសេធ'}
-                    </span>
-                    <span class="text-[10px] text-slate-400 font-mono">${item.time}</span>
-                </div>
-            `).join('');
-        }
-
-        function updateUI() {
-            const total = countO + countX;
-
-            document.getElementById('badgeCountO').innerText = countO;
-            document.getElementById('badgeCountX').innerText = countX;
-            document.getElementById('statCountO').innerText = countO;
-            document.getElementById('statCountX').innerText = countX;
-            document.getElementById('totalTapsLabel').innerText = `សរុបទាំងអស់: ${total}`;
-
-            const barO = document.getElementById('barO');
-            const barX = document.getElementById('barX');
-            const percentOEl = document.getElementById('percentO');
-            const percentXEl = document.getElementById('percentX');
-
-            if (total === 0) {
-                barO.style.width = '50%';
-                barX.style.width = '50%';
-                percentOEl.innerText = '0%';
-                percentXEl.innerText = '0%';
-            } else {
-                const percentOVal = Math.round((countO / total) * 100);
-                const percentXVal = 100 - percentOVal;
-                barO.style.width = `${percentOVal}%`;
-                barX.style.width = `${percentXVal}%`;
-                percentOEl.innerText = `${percentOVal}%`;
-                percentXEl.innerText = `${percentXVal}%`;
-            }
-
-            renderHistoryList();
-        }
-
-        function promptResetCounters() {
-            document.getElementById('resetModal').classList.remove('hidden');
-        }
-
-        function closeResetModal() {
-            document.getElementById('resetModal').classList.add('hidden');
-        }
-
-        function confirmResetCounters() {
-            countO = 0;
-            countX = 0;
-            recentHistory = [];
-            saveState();
-            updateUI();
-            closeResetModal();
-        }
-
-        function toggleHistoryLog() {
-            document.getElementById('historyContainer').classList.toggle('hidden');
-        }
-
-        function clearHistory() {
-            recentHistory = [];
-            saveState();
-            renderHistoryList();
-        }
-
-        function toggleSound() {
-            isMuted = !isMuted;
-            document.getElementById('soundOnIcon').classList.toggle('hidden', isMuted);
-            document.getElementById('soundOffIcon').classList.toggle('hidden', !isMuted);
-            saveState();
-        }
-
-        function toggleSpeech() {
-            isSpeechEnabled = !isSpeechEnabled;
-            document.getElementById('speechOnIcon').classList.toggle('hidden', !isSpeechEnabled);
-            document.getElementById('speechOffIcon').classList.toggle('hidden', !isSpeechEnabled);
-            saveState();
-        }
-
-        function toggleHelpModal(show) {
-            document.getElementById('helpModal').classList.toggle('hidden', !show);
-        }
-
-        function saveState() {
-            try {
-                localStorage.setItem('sb_count_o', countO);
-                localStorage.setItem('sb_count_x', countX);
-                localStorage.setItem('sb_history', JSON.stringify(recentHistory));
-                localStorage.setItem('sb_muted', isMuted);
-                localStorage.setItem('sb_speech', isSpeechEnabled);
-                localStorage.setItem('sb_autoclose', overlayAutoCloseSeconds);
-            } catch (e) {}
-        }
-
-        function loadState() {
-            try {
-                const savedO = localStorage.getItem('sb_count_o');
-                const savedX = localStorage.getItem('sb_count_x');
-                const savedHist = localStorage.getItem('sb_history');
-                const savedMuted = localStorage.getItem('sb_muted');
-                const savedSpeech = localStorage.getItem('sb_speech');
-                const savedAutoClose = localStorage.getItem('sb_autoclose');
-
-                if (savedO !== null) countO = parseInt(savedO, 10) || 0;
-                if (savedX !== null) countX = parseInt(savedX, 10) || 0;
-                if (savedHist) recentHistory = JSON.parse(savedHist) || [];
-                if (savedMuted !== null) isMuted = (savedMuted === 'true');
-                if (savedSpeech !== null) isSpeechEnabled = (savedSpeech === 'true');
-                if (savedAutoClose !== null) overlayAutoCloseSeconds = parseInt(savedAutoClose, 10) || 0;
-
-                document.getElementById('soundOnIcon').classList.toggle('hidden', isMuted);
-                document.getElementById('soundOffIcon').classList.toggle('hidden', !isMuted);
-                document.getElementById('speechOnIcon').classList.toggle('hidden', !isSpeechEnabled);
-                document.getElementById('speechOffIcon').classList.toggle('hidden', !isSpeechEnabled);
-                setOverlayTimer(overlayAutoCloseSeconds);
-            } catch (e) {}
-        }
+        // Start initialization
+        window.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
