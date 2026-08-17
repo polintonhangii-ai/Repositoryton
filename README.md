@@ -397,7 +397,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, setDoc, updateDoc, arrayUnion, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'signal-board-app';
         const firebaseConfig = typeof __firebase_config !== 'undefined' 
@@ -519,25 +519,26 @@
 
             const roomDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId);
             const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const fieldToIncrement = choice === 'O' ? 'countO' : 'countX';
 
             try {
-                await updateDoc(roomDocRef, {
-                    [choice === 'O' ? 'countO' : 'countX']: (choice === 'O' ? (parseInt(document.getElementById('liveCountO').innerText) || 0) + 1 : (parseInt(document.getElementById('liveCountX').innerText) || 0) + 1),
+                await setDoc(roomDocRef, {
+                    [fieldToIncrement]: increment(1),
                     history: arrayUnion({
                         choice: choice,
                         userId: currentUserId,
                         time: timeStr
                     }),
                     updatedAt: Date.now()
-                });
-            } catch (err) {
-                // If doc does not exist yet
-                setDoc(roomDocRef, {
-                    countO: choice === 'O' ? 1 : 0,
-                    countX: choice === 'X' ? 1 : 0,
-                    history: [{ choice, userId: currentUserId, time: timeStr }],
-                    updatedAt: Date.now()
                 }, { merge: true });
+            } catch (err) {
+                console.error("Vote sync error:", err);
+                // Fallback UI update if offline or network glitch
+                const countElem = document.getElementById(choice === 'O' ? 'liveCountO' : 'liveCountX');
+                if (countElem) {
+                    const currentVal = parseInt(countElem.innerText) || 0;
+                    countElem.innerText = currentVal + 1;
+                }
             }
         };
 
